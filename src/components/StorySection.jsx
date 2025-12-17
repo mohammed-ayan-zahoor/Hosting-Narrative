@@ -13,9 +13,9 @@ const StorySection = ({
         <section
             id={id}
             className={clsx(
-                "min-h-screen w-full flex flex-col md:flex-row items-center px-6 py-24 relative overflow-hidden transition-colors duration-500",
-                // Spacing Fix: Increased gap significantly
-                "gap-16 md:gap-32 lg:gap-48",
+                "min-h-screen w-full flex flex-col md:flex-row items-center px-4 md:px-6 py-12 md:py-24 relative overflow-hidden transition-colors duration-500",
+                // Spacing Fix: Adjusted for mobile responsiveness
+                "gap-12 md:gap-32 lg:gap-48",
                 reverse ? "md:flex-row-reverse" : "",
                 className
             )}
