@@ -2,15 +2,23 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import StorySection from './StorySection';
 import { PowerOff, Zap, ZapOff } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../data/translations';
 
 const NarrativeSection2_Shutdown = () => {
     const [isPowered, setIsPowered] = useState(true);
+    const { language } = useLanguage();
+    const t = translations[language];
+
+    const togglePower = () => {
+        setIsPowered(!isPowered);
+    };
 
     return (
         <StorySection
-            id="shutdown-problem"
-            title="But you have to sleep."
-            className="bg-zinc-100 dark:bg-slate-900 text-white transition-colors duration-1000"
+            id="hosting-problem"
+            title={t.section2.title}
+            className="bg-zinc-50 dark:bg-slate-900 text-white transition-colors duration-1000"
             reverse={true}
             visual={
                 <div className="relative w-full h-[500px] flex items-center justify-center px-4">
@@ -60,8 +68,8 @@ const NarrativeSection2_Shutdown = () => {
                             <button
                                 onClick={() => setIsPowered(!isPowered)}
                                 className={`px-8 py-3 rounded-full font-bold shadow-lg transform active:scale-95 transition-all text-white flex items-center gap-2 ${isPowered
-                                        ? 'bg-rose-500 hover:bg-rose-600 shadow-rose-500/30'
-                                        : 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/30'
+                                    ? 'bg-rose-500 hover:bg-rose-600 shadow-rose-500/30'
+                                    : 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/30'
                                     }`}
                             >
                                 {isPowered ? <ZapOff size={18} /> : <Zap size={18} />}
@@ -76,18 +84,18 @@ const NarrativeSection2_Shutdown = () => {
                 </div>
             }
         >
-            <p>
-                Eventually, you turn off your computer. Or it goes to sleep. Or the internet cuts out.
+            <p className="text-lg text-slate-600 dark:text-slate-300 mb-6 font-light leading-relaxed">
+                {t.section2.p1}
             </p>
-            <p>
-                The moment that happens, <strong className="text-rose-500">POOF</strong>.
+            <p className="text-lg text-slate-600 dark:text-slate-300 mb-6 font-light leading-relaxed">
+                {t.section2.p2}
             </p>
             <p className="text-slate-400 italic border-l-2 border-slate-300 pl-4">
-                <span className="text-xs font-bold bg-rose-100 text-rose-600 px-1 rounded mr-2 uppercase">Interact</span>
-                Try {isPowered ? "pulling the plug" : "turning it back on"} to see what happens.
+                <span className="text-xs font-bold bg-rose-100 text-rose-600 px-1 rounded mr-2 uppercase">{t.section2.interact_label}</span>
+                {t.section2.interact_desc}
             </p>
-            <p>
-                Your website disappears from the world. Nobody can visit it. You need a solution that stays awake forever.
+            <p className="text-lg text-slate-600 dark:text-slate-300 mb-6 font-light leading-relaxed">
+                {t.section2.p3}
             </p>
         </StorySection>
     );

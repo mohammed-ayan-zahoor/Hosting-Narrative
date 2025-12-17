@@ -1,31 +1,33 @@
 import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { useState } from 'react';
 import StorySection from './StorySection';
-import { CreditCard, Server, ArrowRight, Check } from 'lucide-react';
+import { Server, ArrowRight, Check } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../data/translations';
 
 const NarrativeSection3_Buying = () => {
-    const [purchased, setPurchased] = useState(false);
-    const x = useMotionValue(0);
-    const xInput = [0, 200]; // Slider width
-    const opacity = useTransform(x, xInput, [1, 0]);
-    const bg = useTransform(x, xInput, ["#eef2ff", "#dcfce7"]);
+    const [isPaid, setIsPaid] = useState(false);
+    const { language } = useLanguage();
+    const t = translations[language];
 
-    const handleDragEnd = () => {
-        if (x.get() > 150) {
-            setPurchased(true);
-        } else {
-            // Snap back happens automatically via layout animation usually, 
-            // but we rely on dragSnapToOrigin/constraints here or re-render
+    // Drag logic for swipe to pay
+    const x = useMotionValue(0);
+    // Move all useTransform calls here, unconditionally
+    const textOpacity = useTransform(x, [0, 100], [1, 0]);
+    const buttonBackground = useTransform(x, [0, 200], ['#4f46e5', '#10b981']);
+
+    const handleDragEnd = (_, info) => {
+        if (info.offset.x > 150) {
+            setIsPaid(true);
         }
     };
 
     return (
         <StorySection
             id="buying-hosting"
-            title="So, you rent a computer."
+            title={t.section3.title}
             className="bg-white dark:bg-slate-950"
             visual={
-
                 <div className="relative w-full h-[400px] flex items-center justify-center">
                     {/* Background Blob */}
                     <motion.div
@@ -40,7 +42,7 @@ const NarrativeSection3_Buying = () => {
                         initial={{ scale: 0.9, opacity: 0 }}
                         whileInView={{ scale: 1, opacity: 1 }}
                     >
-                        {!purchased ? (
+                        {!isPaid ? (
                             <>
                                 <div className="flex justify-between items-center mb-6">
                                     <div className="flex items-center gap-2">
@@ -59,10 +61,11 @@ const NarrativeSection3_Buying = () => {
                                 </div>
 
                                 {/* Slider Track */}
-                                <div className="relative h-14 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center px-1 overflow-hidden">
+                                <div className="relative h-14 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center px-1 overflow-hidden" style={{ backgroundColor: '#f1f5f9' }}>
+                                    {/* Note: simplistic inline style for track background fallback */}
                                     <motion.div
                                         className="text-center w-full text-xs font-bold text-slate-400 uppercase tracking-widest absolute pointers-events-none"
-                                        style={{ opacity }}
+                                        style={{ opacity: textOpacity }}
                                     >
                                         Swipe to Pay
                                     </motion.div>
@@ -72,7 +75,7 @@ const NarrativeSection3_Buying = () => {
                                         drag="x"
                                         dragConstraints={{ left: 0, right: 200 }}
                                         dragElastic={0.1}
-                                        style={{ x, background: x.get() > 100 ? '#10b981' : '#4f46e5' }}
+                                        style={{ x, background: buttonBackground }}
                                         onDragEnd={handleDragEnd}
                                         className="w-12 h-12 rounded-full flex items-center justify-center text-white cursor-grab active:cursor-grabbing z-10 shadow-md"
                                     >
@@ -107,19 +110,26 @@ const NarrativeSection3_Buying = () => {
                 </div>
             }
         >
-            <p>
-                So, you go shopping. Not for clothes, but for a <strong className="text-indigo-600">powerful remote computer</strong>.
+            <p className="text-lg text-slate-600 dark:text-slate-300 mb-6 font-light leading-relaxed">
+                {t.section3.p1_start} <strong className="font-semibold text-slate-900 dark:text-white">{t.section3.p1_strong}</strong>{t.section3.p1_end}
             </p>
-            <p>
-                You visit a hosting provider (like Hostinger) and essentially say:
+            <p className="text-lg text-slate-600 dark:text-slate-300 mb-6 font-light leading-relaxed">
+                {t.section3.p2}
             </p>
-            <blockquote className="border-l-4 border-indigo-500 pl-4 py-2 bg-slate-50 dark:bg-slate-900 rounded-r-lg text-slate-700 dark:text-slate-300 italic my-4">
-                "Here is money. Please let me rent a slice of your super-computer for 2 years."
+
+            <blockquote className="border-l-4 border-emerald-500 pl-4 py-3 my-8 bg-emerald-50 dark:bg-emerald-900/20 rounded-r-lg">
+                <p className="text-slate-700 dark:text-slate-200 italic font-medium">
+                    {t.section3.quote}
+                </p>
             </blockquote>
-            <p>
-                This is what <span className="font-bold">Hosting</span> is. It's renting a computer that never shuts down, lives in a secure building, and has blazing fast internet.
-            </p>
-        </StorySection >
+
+            <div className="mt-8 bg-slate-100 dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-mono mb-2 uppercase tracking-wider">Definition</p>
+                <p className="text-lg text-slate-800 dark:text-slate-200">
+                    {t.section3.p3_start} <strong className="text-indigo-600 dark:text-indigo-400">{t.section3.p3_strong}</strong> {t.section3.p3_end}
+                </p>
+            </div>
+        </StorySection>
     );
 };
 

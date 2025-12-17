@@ -1,116 +1,124 @@
-
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import StorySection from './StorySection';
-import { Github, Cloud, ArrowDown, UploadCloud } from 'lucide-react';
+import { Github, ArrowUp, ArrowDown } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../data/translations';
 
 const NarrativeSection6_GitHub = () => {
+    const { language } = useLanguage();
+    const t = translations[language];
+
+    // Beam animation
     const [isPushed, setIsPushed] = useState(false);
+
+    const handlePush = () => {
+        setIsPushed(true);
+        setTimeout(() => setIsPushed(false), 3000); // Reset after animation
+    };
 
     return (
         <StorySection
-            id="shipping-code"
-            title="Shipping the code."
+            id="moving-code"
+            title={t.section6.title}
             className="bg-white dark:bg-slate-950"
-            reverse={true}
             visual={
-                <div className="relative w-full h-[500px] flex items-center justify-center">
-
-                    {/* The Process Container */}
-                    <div className="relative w-full max-w-sm flex flex-col items-center gap-12">
-
-                        {/* 1. You (Local) */}
-                        <div className="flex flex-col items-center relative z-20">
-                            <div className="bg-slate-900 text-white p-4 rounded-xl shadow-xl flex items-center gap-3">
-                                <Github size={32} />
-                                <div className="text-left">
-                                    <div className="font-bold text-sm">git push origin main</div>
-                                    <div className="text-[10px] text-slate-400">hash: 8f2a9c</div>
-                                </div>
-                            </div>
+                <div className="relative w-full h-[500px] flex items-center justify-center gap-10">
+                    {/* Laptop Left */}
+                    <div className="flex flex-col items-center">
+                        <div className="w-24 h-16 bg-slate-800 rounded-md border-b-4 border-slate-700 flex items-center justify-center">
+                            <span className="text-xs text-white">Your Laptop</span>
                         </div>
+                    </div>
 
-                        {/* Interactive Push Button */}
-                        {!isPushed ? (
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => setIsPushed(true)}
-                                className="bg-black dark:bg-white text-white dark:text-black px-8 py-4 rounded-full font-bold text-lg shadow-2xl flex items-center gap-2 z-30 animate-bounce-slight"
-                            >
-                                <UploadCloud size={24} />
-                                PUSH TO DEPLOY
-                            </motion.button>
-                        ) : (
-                            <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                className="bg-emerald-500 text-white px-6 py-2 rounded-full font-bold shadow-lg z-30"
-                            >
-                                Deployment Started!
-                            </motion.div>
-                        )}
-
-                        {/* 2. The Cloud (Remote) */}
-                        <div className="flex flex-col items-center relative z-20">
-                            <div className="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 p-6 rounded-full shadow-inner border border-indigo-100 dark:border-indigo-800">
-                                <Cloud size={48} />
-                            </div>
-                            <span className="text-xs font-bold mt-2 text-indigo-400 uppercase tracking-widest">The Cloud Warehouse</span>
-                        </div>
-
-                        {/* The Transport Beam (Only animate if pushed) */}
+                    {/* The Beam Path */}
+                    <div className="relative w-48 h-2 bg-slate-200 dark:bg-slate-700 rounded overflow-hidden flex items-center">
                         {isPushed && (
-                            <div className="absolute inset-0 flex justify-center pointer-events-none">
-                                {[1, 2, 3, 4, 5].map((i) => (
-                                    <motion.div
-                                        key={i}
-                                        initial={{ y: -50, opacity: 0 }}
-                                        animate={{ y: 250, opacity: [0, 1, 0] }}
-                                        transition={{
-                                            duration: 1.5,
-                                            repeat: Infinity,
-                                            delay: i * 0.3,
-                                            ease: "linear"
-                                        }}
-                                        className="absolute top-10"
-                                    >
-                                        <div className="w-3 h-3 bg-indigo-500 dark:bg-indigo-400 rounded-sm rotate-45 shadow-[0_0_10px_#6366f1]" />
-                                    </motion.div>
-                                ))}
-                                <motion.div
-                                    className="absolute w-1 h-full bg-indigo-100 dark:bg-indigo-900/20 -z-10"
-                                    initial={{ height: 0 }}
-                                    animate={{ height: '100%' }}
-                                />
-                            </div>
+                            <motion.div
+                                className="absolute left-0 top-0 bottom-0 w-8 bg-blue-500 blur-sm"
+                                initial={{ x: -32 }}
+                                animate={{ x: 200 }}
+                                transition={{ duration: 1.5, ease: "easeInOut" }}
+                            />
                         )}
+                        {/* Connecting Line Visual */}
+                        <div className="w-full border-t border-dashed border-slate-400"></div>
+                    </div>
 
+
+                    {/* GitHub Center */}
+                    <div className="flex flex-col items-center relative z-10">
+                        <motion.div
+                            className="w-24 h-24 bg-slate-900 rounded-full flex items-center justify-center text-white shadow-xl"
+                            whileHover={{ scale: 1.1 }}
+                        >
+                            <Github size={48} />
+                        </motion.div>
+                        <span className="font-bold mt-2 text-slate-800 dark:text-slate-200">GitHub</span>
+                    </div>
+
+                    {/* The Beam Path 2 */}
+                    <div className="relative w-48 h-2 bg-slate-200 dark:bg-slate-700 rounded overflow-hidden flex items-center">
+                        {isPushed && (
+                            <motion.div
+                                className="absolute left-0 top-0 bottom-0 w-8 bg-purple-500 blur-sm"
+                                initial={{ x: -32 }}
+                                animate={{ x: 200 }}
+                                transition={{ duration: 1.5, delay: 1.5, ease: "easeInOut" }}
+                            />
+                        )}
+                        <div className="w-full border-t border-dashed border-slate-400"></div>
+                    </div>
+
+                    {/* Server Right */}
+                    <div className="flex flex-col items-center">
+                        <div className="w-24 h-32 bg-slate-800 rounded-md border-b-4 border-slate-700 flex flex-col items-center justify-evenly p-2">
+                            <div className="w-full h-1 bg-green-500/20 rounded"></div>
+                            <div className="w-full h-1 bg-green-500/20 rounded"></div>
+                            <div className="w-full h-1 bg-green-500/20 rounded"></div>
+                            <span className="text-[10px] text-white">Server</span>
+                        </div>
                     </div>
                 </div>
             }
         >
-            <p>
-                Now you're logged in. But the server is empty. Your code is still on your laptop.
+            <p className="text-lg text-slate-600 dark:text-slate-300 mb-6 font-light leading-relaxed">
+                {t.section6.p1}
             </p>
-            <p>
-                The best way to move it? <strong className="text-zinc-900 dark:text-white">GitHub</strong>.
+            <p className="text-lg text-slate-600 dark:text-slate-300 mb-6 font-light leading-relaxed">
+                {t.section6.p2_start} <strong className="font-semibold text-slate-900 dark:text-white">{t.section6.p2_strong}</strong>{t.section6.p2_end}
             </p>
+
             <ul className="space-y-4 my-6">
                 <li className="flex items-start gap-3">
-                    <div className="bg-zinc-100 dark:bg-slate-800 p-1 rounded mt-1"><Cloud size={16} className="dark:text-slate-200" /></div>
-                    <span className="text-sm text-slate-600 dark:text-slate-300"><strong>Step 1:</strong> Push code to GitHub (The Warehouse).</span>
+                    <div className="bg-zinc-100 dark:bg-slate-800 p-1 rounded mt-1"><ArrowUp size={16} className="text-slate-600 dark:text-slate-200" /></div>
+                    <span className="text-sm text-slate-600 dark:text-slate-300"><strong>{t.section6.list1_strong}</strong> {t.section6.list1_text}</span>
                 </li>
                 <li className="flex items-start gap-3">
                     <div className="bg-indigo-50 dark:bg-indigo-900/30 p-1 rounded mt-1"><ArrowDown size={16} className="text-indigo-600 dark:text-indigo-400" /></div>
-                    <span className="text-sm text-slate-600 dark:text-slate-300"><strong>Step 2:</strong> Tell your server to "Clone" (download) it.</span>
+                    <span className="text-sm text-slate-600 dark:text-slate-300"><strong>{t.section6.list2_strong}</strong> {t.section6.list2_text}</span>
                 </li>
             </ul>
-            <p>
-                Now your server has an exact copy of your website. It is ready to show the world.
-            </p>
+
+            <button
+                onClick={handlePush}
+                disabled={isPushed}
+                className="mt-4 px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-lg shadow hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+                <Github size={18} />
+                {isPushed ? "Deploying..." : "Push to Deploy"}
+            </button>
         </StorySection >
     );
+
+    const handleFileDrop = (fileName, info) => {
+        // Check if dropped roughly over the layout 
+        if (laptopRef.current && info.offset.x < 100 && info.offset.x > -100 && info.offset.y < 100) {
+            // Simulate drop
+            setIsDropped(true);
+            setTimeout(() => setIsDropped(false), 1000);
+        }
+    };
 };
 
 export default NarrativeSection6_GitHub;

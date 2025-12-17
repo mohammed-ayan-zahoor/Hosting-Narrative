@@ -1,64 +1,55 @@
 import { motion } from 'framer-motion';
 import StorySection from './StorySection';
-import { Search, Frown } from 'lucide-react';
+import { Globe, Server } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../data/translations';
 
 const NarrativeSection7_IP = () => {
+    const { language } = useLanguage();
+    const t = translations[language];
+
     return (
         <StorySection
-            id="ip-problem"
-            title="It lives on a number."
-            className="bg-zinc-100 dark:bg-slate-900"
+            id="ip-address"
+            title={t.section7.title}
+            className="bg-slate-50 dark:bg-slate-900"
             visual={
-                <div className="relative w-full max-w-lg mx-auto flex flex-col items-center">
+                <div className="relative w-full h-[400px] flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+                    {/* The Internet Map Background */}
+                    <div className="absolute inset-0 opacity-10"
+                        style={{ backgroundImage: 'radial-gradient(circle, #64748b 1px, transparent 1px)', backgroundSize: '20px 20px' }}
+                    />
 
-                    {/* Browser Window */}
-                    <div className="w-full bg-white dark:bg-slate-800 rounded-xl shadow-xl overflow-hidden border border-slate-200 dark:border-slate-700">
-                        {/* Browser Bar */}
-                        <div className="bg-slate-100 dark:bg-slate-900 px-4 py-3 flex items-center gap-4 border-b border-slate-200 dark:border-slate-700">
-                            <div className="flex gap-1.5">
-                                <div className="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-600" />
-                                <div className="w-3 h-3 rounded-full bg-slate-300 dark:bg-slate-600" />
-                            </div>
-                            {/* The Ugly URL */}
-                            <div className="flex-1 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-600 rounded px-3 py-1 text-sm font-mono text-slate-600 dark:text-slate-300 flex justify-between items-center">
-                                <span>http://172.217.16.142</span>
-                                <Search size={14} className="text-slate-400" />
-                            </div>
-                        </div>
-
-                        {/* Website Content */}
-                        <div className="h-48 bg-slate-50 dark:bg-slate-900/50 flex items-center justify-center">
-                            <span className="text-xl font-bold text-slate-300 dark:text-slate-600">Your Website</span>
-                        </div>
-                    </div>
-
-                    {/* The Confused User Bubble */}
+                    {/* Server Node */}
                     <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        whileInView={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.5, type: "spring" }}
-                        className="absolute -right-4 top-20 bg-rose-500 text-white p-4 rounded-tr-3xl rounded-bl-3xl rounded-tl-xl shadow-lg z-10 max-w-[200px]"
+                        className="relative z-10 flex flex-col items-center"
+                        initial={{ scale: 0.8 }}
+                        whileInView={{ scale: 1 }}
                     >
-                        <div className="flex items-center gap-2 mb-2">
-                            <Frown size={20} />
-                            <span className="font-bold text-sm">Wait...</span>
+                        <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-[0_0_30px_rgba(37,99,235,0.4)] animate-pulse">
+                            <Server size={32} />
                         </div>
-                        <p className="text-xs leading-relaxed">
-                            "I have to type numbers? I can't remember this!"
-                        </p>
+                        <div className="mt-4 bg-white dark:bg-slate-900 px-4 py-2 rounded shadow text-slate-900 dark:text-slate-100 font-mono font-bold border border-slate-200 dark:border-slate-700">
+                            172.217.16.46
+                        </div>
                     </motion.div>
 
+                    {/* Connecting Lines */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div className="w-[80%] h-[1px] bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-50"></div>
+                        <div className="w-[1px] h-[80%] bg-gradient-to-b from-transparent via-blue-400 to-transparent opacity-50 absolute"></div>
+                    </div>
                 </div>
             }
         >
-            <p>
-                Your website is live! But there's a problem.
+            <p className="text-lg text-slate-600 dark:text-slate-300 mb-6 font-light leading-relaxed">
+                {t.section7.p1_start} <strong className="font-semibold text-slate-900 dark:text-white">{t.section7.p1_strong}</strong> {t.section7.p1_end}
             </p>
-            <p>
-                Computers find each other using <strong className="text-emerald-600 dark:text-emerald-400">IP Addresses</strong> (like 172.217.16.46).
+            <p className="text-lg text-slate-600 dark:text-slate-300 mb-6 font-light leading-relaxed">
+                {t.section7.p2}
             </p>
-            <p>
-                Humans are terrible at remembering long strings of numbers.
+            <p className="text-lg text-slate-600 dark:text-slate-300 mb-6 font-light leading-relaxed">
+                {t.section7.p3_start} <strong className="font-semibold text-slate-900 dark:text-white">{t.section7.p3_strong}</strong>{t.section7.p3_end}
             </p>
         </StorySection>
     );

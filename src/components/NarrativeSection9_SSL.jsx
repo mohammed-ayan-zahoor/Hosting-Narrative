@@ -1,16 +1,19 @@
-
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import StorySection from './StorySection';
 import { Lock, Unlock, ShieldCheck, ShieldAlert } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../data/translations';
 
 const NarrativeSection9_SSL = () => {
     const [isLocked, setIsLocked] = useState(false);
+    const { language } = useLanguage();
+    const t = translations[language];
 
     return (
         <StorySection
             id="ssl-trust"
-            title="The Trust (SSL)"
+            title={t.section9.title}
             className="bg-zinc-50 dark:bg-slate-950"
             visual={
                 <div className="relative w-full max-w-lg mx-auto flex flex-col items-center">
@@ -76,24 +79,20 @@ const NarrativeSection9_SSL = () => {
                     </motion.div>
 
                     <p className="text-slate-400 italic text-sm">
-                        <span className="font-bold text-emerald-500">Click the Lock</span> to encrypt the connection!
+                        <span className="font-bold text-emerald-500">{t.section9.toggle_label}</span> {t.section9.toggle_desc}
                     </p>
 
                 </div>
             }
         >
-            <p>
-                One last problem. The internet is a dangerous place.
+            <p className="text-lg text-slate-600 dark:text-slate-300 mb-6 font-light leading-relaxed">
+                {t.section9.p1_start} <strong className="font-semibold text-slate-900 dark:text-white">{t.section9.p1_strong}</strong> {t.section9.p1_end}
             </p>
-            <p>
-                Browsers warn users: <span className="text-rose-500 font-bold">"Not Secure"</span> if you don't have protection.
+            <p className="text-lg text-slate-600 dark:text-slate-300 mb-6 font-light leading-relaxed">
+                {t.section9.p2}
             </p>
-            <p>
-                You need an <strong className="text-emerald-600">SSL Certificate</strong>.
-            </p>
-            <p>
-                It's like putting your website inside a digital armored car. It encrypts the data so nobody can steal it.
-                Once you have it, you get the <span className="text-emerald-600 font-bold">Green Lock</span>.
+            <p className="text-lg text-slate-600 dark:text-slate-300 mb-6 font-light leading-relaxed">
+                {t.section9.p3_start} <strong className="font-semibold text-emerald-600 dark:text-emerald-400">{t.section9.p3_strong}</strong> {t.section9.p3_end}
             </p>
         </StorySection>
     );

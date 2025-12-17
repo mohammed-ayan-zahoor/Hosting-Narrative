@@ -1,124 +1,138 @@
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 import StorySection from './StorySection';
-import { Terminal, Key, Lock, Fingerprint } from 'lucide-react';
+import { Terminal, CheckCircle } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../data/translations';
 
 const NarrativeSection5_Terminal = () => {
-    return (
-        <StorySection
-            id="terminal-interface"
-            title="The Cockpit (Terminal)"
-            className="bg-zinc-100 dark:bg-zinc-900"
-            visual={
-                <div className="relative w-full max-w-lg mx-auto">
+    const { language } = useLanguage();
+    const t = translations[language];
 
-                    {/* Credentials Card flying in */}
-                    <motion.div
-                        initial={{ x: -100, opacity: 0 }}
-                        whileInView={{ x: 0, opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                        className="absolute -top-12 -left-4 z-20 bg-white dark:bg-slate-800 p-4 rounded-lg shadow-xl border border-indigo-100 dark:border-slate-700 flex items-center gap-3"
-                    >
-                        <div className="bg-amber-100 dark:bg-amber-900/30 p-2 rounded-full text-amber-600 dark:text-amber-500">
-                            <Key size={20} />
-                        </div>
-                        <div className="text-xs dark:text-slate-300">
-                            <p className="font-bold text-slate-700 dark:text-slate-200">ACCESS GRANTED</p>
-                            <p className="font-mono text-slate-500 dark:text-slate-400">user: root</p>
-                            <p className="font-mono text-slate-500 dark:text-slate-400">pass: ********</p>
-                        </div>
-                    </motion.div>
+    const [input, setInput] = useState('');
+    const [history, setHistory] = useState([
+        { type: 'system', content: 'Connecting to remote server...' },
+        { type: 'system', content: 'Connection established.' },
+        { type: 'system', content: 'Welcome to Ubuntu 22.04.2 LTS (GNU/Linux 5.15.0-1035-aws x86_64)' }
+    ]);
+    const [accessGranted, setAccessGranted] = useState(false);
+    const inputRef = useRef(null);
+    const bottomRef = useRef(null);
 
-                    {/* Terminal Window */}
-                    <div className="bg-slate-900 rounded-lg shadow-2xl overflow-hidden font-mono text-sm relative z-10 min-h-[300px] flex flex-col">
-                        <div className="bg-slate-800 px-4 py-2 flex items-center gap-2">
-                            <div className="flex gap-1.5">
-                                <div className="w-3 h-3 rounded-full bg-rose-500" />
-                                <div className="w-3 h-3 rounded-full bg-amber-500" />
-                                <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                            </div>
-                            <span className="text-slate-400 text-xs ml-2">root@server-01:~</span>
-                        </div>
+    // Auto-scroll to bottom of terminal
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [history]);
 
-                        <div className="p-6 text-slate-300 flex-1 flex flex-col gap-2" onClick={() => document.getElementById('terminal-input')?.focus()}>
-                            <p>Welcome to Ubuntu 22.04 LTS</p>
-                            <p className="text-slate-500">Last login: Tue Dec 17 09:23:01</p>
-                            <br />
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const cmd = input.trim();
 
-                            <div className="flex items-center gap-2 flex-wrap">
-                                <span className="text-emerald-400 shrink-0">root@server:~$</span>
-                                <InteractiveTerminalInput onComplete={() => { }} />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            // Add user command to history
+            const newHistory = [...history, { type: 'user', content: cmd }];
+
+            // Command processing logic
+            if (cmd.startsWith("ssh root") && cmd.length > 7) {
+                newHistory.push({ type: 'success', content: 'Authenticating...' });
+                newHistory.push({ type: 'success', content: 'Access Granted. You are now root.' });
+                setAccessGranted(true);
+            } else if (cmd === 'clear') {
+                setHistory([]);
+                setInput('');
+                return;
+            } else {
+                newHistory.push({ type: 'error', content: `Command not found: ${cmd}` });
             }
-        >
-            <p>
-                How do you talk to this remote computer? You don't use a mouse. You use the <strong className="text-indigo-600 dark:text-indigo-400">Terminal</strong>.
-            </p>
-            <p>
-                Think of it like a chat window where you text commands to your server.
-            </p>
-            <p>
-                <span className="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-sm font-bold text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-600">Try It:</span>
-                Click the terminal and type <span className="font-mono text-emerald-600 dark:text-emerald-400">ssh root</span> to connect.
-            </p>
-            <p>
-                To get in, you need the <strong className="text-amber-600 dark:text-amber-500">Credentials</strong> (Username & Password) that the hosting company gave you.
-            </p>
-        </StorySection>
-    );
-};
 
-const InteractiveTerminalInput = ({ onComplete }) => {
-    const [input, setInput] = useState("");
-    const [completed, setCompleted] = useState(false);
-    const targetCommand = "ssh root@172.217.16.46";
-
-    const handleChange = (e) => {
-        const val = e.target.value;
-        setInput(val);
-        if (val.toLowerCase().startsWith("ssh root") && val.length > 7) {
-            setCompleted(true);
-            onComplete();
+            setHistory(newHistory);
+            setInput('');
         }
     };
 
     return (
-        <>
-            {!completed ? (
-                <div className="relative flex-1">
-                    <input
-                        id="terminal-input"
-                        type="text"
-                        value={input}
-                        onChange={handleChange}
-                        className="bg-transparent border-none outline-none text-slate-100 w-full absolute inset-0 opacity-0 cursor-text"
-                        autoComplete="off"
-                    />
-                    <span className="text-slate-100">{input}</span>
-                    <motion.span
-                        animate={{ opacity: [0, 1] }}
-                        transition={{ repeat: Infinity, duration: 0.8 }}
-                        className="w-2 h-4 bg-slate-300 inline-block align-middle ml-1"
-                    />
+        <StorySection
+            id="terminal-access"
+            title={t.section5.title}
+            className="bg-slate-900 border-t border-slate-800"
+            visual={
+                <div
+                    className="w-full max-w-2xl mx-auto bg-slate-950 rounded-lg shadow-2xl overflow-hidden border border-slate-800 font-mono text-sm relative"
+                    onClick={() => inputRef.current?.focus()}
+                >
+                    {/* Terminal Header */}
+                    <div className="bg-slate-800 px-4 py-2 flex items-center justify-between select-none">
+                        <div className="flex gap-2">
+                            <div className="w-3 h-3 bg-red-500 rounded-full" />
+                            <div className="w-3 h-3 bg-yellow-500 rounded-full" />
+                            <div className="w-3 h-3 bg-green-500 rounded-full" />
+                        </div>
+                        <div className="text-slate-400 text-xs">root@myserver:~</div>
+                        <div className="w-4" /> {/* Spacer */}
+                    </div>
+
+                    {/* Terminal Body */}
+                    <div className="p-4 h-[300px] overflow-y-auto custom-scrollbar flex flex-col gap-1 cursor-text">
+                        {history.map((line, i) => (
+                            <div key={i} className={`${line.type === 'user' ? 'text-white font-bold mt-2' :
+                                    line.type === 'error' ? 'text-red-400' :
+                                        line.type === 'success' ? 'text-emerald-400' :
+                                            'text-slate-400'
+                                }`}>
+                                {line.type === 'user' ? '> ' : ''}{line.content}
+                            </div>
+                        ))}
+
+                        {/* Input Line */}
+                        {!accessGranted && (
+                            <div className="flex items-center gap-2 text-white animate-fade-in">
+                                <span className="text-emerald-500 font-bold">$</span>
+                                <input
+                                    ref={inputRef}
+                                    type="text"
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                    className="bg-transparent border-none outline-none flex-1 font-mono text-white placeholder-slate-600"
+                                    placeholder="Type 'ssh root'..."
+                                    autoFocus
+                                />
+                            </div>
+                        )}
+
+                        {accessGranted && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="mt-4 p-4 border border-emerald-500/30 bg-emerald-500/10 rounded flex items-center gap-3 text-emerald-400"
+                            >
+                                <CheckCircle size={20} />
+                                <span>Root Access Confirmed. System Ready.</span>
+                            </motion.div>
+                        )}
+                        <div ref={bottomRef} />
+                    </div>
                 </div>
-            ) : (
-                <div className="flex flex-col gap-2 w-full">
-                    <span className="text-slate-100">{targetCommand}</span>
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        className="text-emerald-300 mt-2"
-                    >
-                        &gt; Authenticating...
-                        <br />
-                        &gt; <span className="text-emerald-400 font-bold">Access Granted.</span>
-                    </motion.div>
-                </div>
-            )}
-        </>
+            }
+        >
+            <p className="text-lg text-slate-300 dark:text-slate-300 mb-6 font-light leading-relaxed">
+                {t.section5.p1_start} <strong className="font-semibold text-emerald-400 font-mono">{t.section5.p1_strong}</strong>.
+            </p>
+            <p className="text-lg text-slate-300 dark:text-slate-300 mb-6 font-light leading-relaxed">
+                {t.section5.p2}
+            </p>
+
+            <div className="bg-slate-800 p-4 rounded-lg border-l-4 border-emerald-500 my-6">
+                <p className="font-mono text-sm text-emerald-400 mb-1">
+                    <span className="font-bold mr-2">{t.section5.try_label}</span>
+                    {t.section5.try_action} <span className="bg-slate-900 px-2 py-0.5 rounded text-white mx-1">{t.section5.try_cmd}</span> {t.section5.try_end}
+                </p>
+            </div>
+
+            <p className="text-lg text-slate-300 dark:text-slate-300 mb-6 font-light leading-relaxed">
+                {t.section5.p3_start} <strong className="font-semibold text-white">{t.section5.p3_strong}</strong> {t.section5.p3_end}
+            </p>
+        </StorySection>
     );
 };
 
